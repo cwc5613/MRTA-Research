@@ -10,7 +10,7 @@ n = 10;
 k = 5;
 
 %gaussian parameters for phi
-alpha = [100; 100]; %strength
+alpha = [0; 0]; %strength
 beta = [.2; .2]; %standard dev
 gamma = [0.5,0.5;0.5,0.5]; %center position
 offset = [1; 1]; %constant offset

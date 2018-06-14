@@ -1,6 +1,9 @@
 function [V0, NI] = Voronoi(P0, p0)
 %Computes the voronoi region of the robot at p given the positions
-%of all the other robots P 
+%of all the other robots P
+
+EnvironConstants;
+
 %Constants
 Limit = 10;
 tol = 1e-6;
@@ -34,12 +37,12 @@ d = Limit;
 LSize = length(Lines(:,1));
 VSize = length(V0(:,1));
 
-%while there are still points, and a) the region is unbounded or b) the 
-%farthest vertex is more than half the distance to the next point  
+%while there are still points, and a) the region is unbounded or b) the
+%farthest vertex is more than half the distance to the next point
 while (i<=n) && (((2*d)>D(i)) || (LSize>VSize))
     NI = [NI; N(i)]; %add index to neighbor list
     pi = P(i,:); %ith point
-    Line = VLine(pi', p0')'; %ith line 
+    Line = VLine(pi', p0')'; %ith line
     Lines = [Lines; Line]; %Add Line to Lines
     %loop to find intersection points that are inside the half planes of
     %all Lines
@@ -48,8 +51,8 @@ while (i<=n) && (((2*d)>D(i)) || (LSize>VSize))
         V0 = [V0; Inpt]; %Add Inpt to V0
         VSize = length(V0(:,1));
         %Test if any points are inside all half planes
-        Test = Lines*[V0, ones(VSize,1)]'<=tol;    
-        Test = cast(Test, 'double');      
+        Test = Lines*[V0, ones(VSize,1)]'<=tol;
+        Test = cast(Test, 'double');
         Test = prod(Test,1); %logical AND over the columns
         %Filter out all points not inside all half-planes
         [Test I] = sort(Test, 'descend');
@@ -67,7 +70,7 @@ while (i<=n) && (((2*d)>D(i)) || (LSize>VSize))
     LSize = sum(Test);
     I = I(1:LSize);
     Lines = Lines(I,:);
-    NI = NI(I); %filter out indices of non-Voronoi Neighbors 
+    NI = NI(I); %filter out indices of non-Voronoi Neighbors
     %max distance point in V0
     d = max(sqrt((V0(:,1)-p0(1)).^2 + (V0(:,2)-p0(2)).^2));
     %increment
@@ -82,22 +85,10 @@ V0 = V0(I,:);
 %get rid of zeros
 i = 1;
 while ~isempty(NI) && NI(i) == 0
-        NI = NI(2:length(NI));
+    NI = NI(2:length(NI));
 end
 Nangle = atan2((P0(NI,2)-p0(2)),(P0(NI,1)-p0(1)));
 [Nangle I] = sort(Nangle);
 NI = NI(I);
 
-% %Plots
-% figure(2)
-% region = V0;
-% %if LSize==VSize
-%     region = [region; region(1,:)];
-% %end
-% plot(P(:,1), P(:,2), 'b.');
-% axis(40*[0 1 0 1]);
-% hold on;
-% plot(p0(1), p0(2), 'ro');
-% plot(region(:,1), region(:,2), 'r-');
-% plot(P0(NI,1), P0(NI,2), 'bo');
-% hold off;
+end
